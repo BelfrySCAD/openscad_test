@@ -42,3 +42,8 @@ filterwarnings = ["ignore::pytest.PytestCollectionWarning"]
 
 [tool.ruff]
 src = ["src"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]
