@@ -1,0 +1,44 @@
+# Example .scadtest file
+#
+# Each [[test]] section defines one OpenSCAD test case.
+# A .scadtest file is a valid TOML file.
+#
+# By default, assert_no_echoes = true and assert_no_warnings = true, so tests
+# must produce no unexpected ECHO or WARNING output unless you explicitly set
+# those fields to false or list expected echoes/warnings.
+
+[[test]]
+# A test that should succeed with a specific echo output.
+# assert_no_echoes is automatically skipped when assert_echoes is provided.
+name = "Echo Integer Test"
+script = "echo(42);"
+expect_success = true
+assert_echoes = ["ECHO: 42"]
+
+[[test]]
+# A test that verifies a variable is echoed correctly.
+# assert_no_echoes is automatically skipped when assert_echoes is provided.
+name = "Set Vars Test"
+script = "echo(w);"
+set_vars = {w = 10}
+expect_success = true
+assert_echoes = ["ECHO: 10"]
+
+[[test]]
+# A test that expects OpenSCAD to fail (e.g. due to a syntax error).
+# Set assert_no_echoes/assert_no_warnings to false for expected-failure tests
+# since OpenSCAD may produce warnings or echoes before failing.
+name = "Expected Failure Test"
+script = "this_function_does_not_exist();"
+expect_success = false
+assert_no_echoes = false
+assert_no_warnings = false
+
+[[test]]
+# A test that asserts the script produces no echoes or warnings.
+# These fields are already true by default; shown here for clarity.
+name = "No Warnings Test"
+script = "cube([1, 1, 1]);"
+expect_success = true
+assert_no_echoes = true
+assert_no_warnings = true
