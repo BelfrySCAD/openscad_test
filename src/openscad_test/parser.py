@@ -13,6 +13,7 @@ class TestCase:
     name: str
     script: Optional[str]
     script_file: Optional[str]
+    script_dir: Optional[str] = None
     set_vars: dict = field(default_factory=dict)
     expect_success: bool = True
     assert_echoes: list = field(default_factory=list)
@@ -79,6 +80,7 @@ def parse_scadtest_file(filepath: str) -> list[TestCase]:
             name=name,
             script=script,
             script_file=script_file,
+            script_dir=str(path.parent),
             set_vars=test_data.get("set_vars", {}),
             expect_success=test_data.get("expect_success", True),
             assert_echoes=test_data.get("assert_echoes", []),

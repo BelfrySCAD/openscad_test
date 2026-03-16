@@ -51,7 +51,8 @@ def run_test(test_case: TestCase) -> TestResult:
     try:
         if test_case.script is not None:
             with tempfile.NamedTemporaryFile(
-                mode="w", suffix=".scad", delete=False
+                mode="w", suffix=".scad", delete=False,
+                dir=test_case.script_dir,
             ) as f:
                 f.write(test_case.script)
                 tmp_file = f.name
