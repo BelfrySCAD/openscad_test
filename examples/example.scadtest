@@ -1,0 +1,33 @@
+# Example .scadtest file
+#
+# Each [[test]] section defines one OpenSCAD test case.
+# A .scadtest file is a valid TOML file.
+
+[[test]]
+# A test that should succeed with a specific echo output.
+name = "Echo Integer Test"
+script = "echo(42);"
+expect_success = true
+assert_echoes = ["ECHO: 42"]
+
+[[test]]
+# A test that verifies a variable is echoed correctly.
+name = "Set Vars Test"
+script = "echo(w);"
+set_vars = {w = 10}
+expect_success = true
+assert_echoes = ["ECHO: 10"]
+
+[[test]]
+# A test that expects OpenSCAD to fail (e.g. due to a syntax error).
+name = "Expected Failure Test"
+script = "this_function_does_not_exist();"
+expect_success = false
+
+[[test]]
+# A test that asserts there are no warnings produced.
+name = "No Warnings Test"
+script = "cube([1, 1, 1]);"
+expect_success = true
+assert_no_echoes = true
+assert_no_warnings = true
