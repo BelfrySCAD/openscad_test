@@ -56,9 +56,9 @@ script = "echo(42);"
         assert t.script_file is None
         assert t.expect_success is True
         assert t.assert_echoes == []
-        assert t.assert_no_echoes is False
+        assert t.assert_no_echoes is True
         assert t.assert_warnings == []
-        assert t.assert_no_warnings is False
+        assert t.assert_no_warnings is True
 
 
 def test_parse_script_file():
@@ -210,9 +210,9 @@ def _make_test_case(**kwargs):
         set_vars={},
         expect_success=True,
         assert_echoes=[],
-        assert_no_echoes=False,
+        assert_no_echoes=True,
         assert_warnings=[],
-        assert_no_warnings=False,
+        assert_no_warnings=True,
     )
     defaults.update(kwargs)
     return TestCase(**defaults)

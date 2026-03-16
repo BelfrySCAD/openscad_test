@@ -30,10 +30,12 @@ def run_test(test_case: TestCase) -> TestResult:
     - If ``expect_success`` is ``False``, OpenSCAD reported at least one error.
     - All strings in ``assert_echoes`` are found (as substrings) in the ECHO
       output lines produced by OpenSCAD.
-    - If ``assert_no_echoes`` is ``True``, there are no ECHO output lines.
+    - If ``assert_no_echoes`` is ``True`` and ``assert_echoes`` is empty,
+      there are no ECHO output lines.
     - All strings in ``assert_warnings`` are found (as substrings) in the
       WARNING output lines produced by OpenSCAD.
-    - If ``assert_no_warnings`` is ``True``, there are no WARNING lines.
+    - If ``assert_no_warnings`` is ``True`` and ``assert_warnings`` is empty,
+      there are no WARNING lines.
 
     When a test fails, relevant ECHO, WARNING, and ERROR lines from OpenSCAD
     are included in :attr:`TestResult.messages`.
@@ -87,8 +89,9 @@ def run_test(test_case: TestCase) -> TestResult:
                     messages.extend(runner.echos)
                     break
 
-            # Check assert_no_echoes
-            if test_case.assert_no_echoes and runner.echos:
+            # Check assert_no_echoes (skipped when assert_echoes lists specific
+            # expected echoes, since the two checks would contradict each other)
+            if test_case.assert_no_echoes and not test_case.assert_echoes and runner.echos:
                 passed = False
                 messages.append("Expected no echoes, but got:")
                 messages.extend(runner.echos)
@@ -101,8 +104,9 @@ def run_test(test_case: TestCase) -> TestResult:
                     messages.extend(runner.warnings)
                     break
 
-            # Check assert_no_warnings
-            if test_case.assert_no_warnings and runner.warnings:
+            # Check assert_no_warnings (skipped when assert_warnings lists specific
+            # expected warnings, since the two checks would contradict each other)
+            if test_case.assert_no_warnings and not test_case.assert_warnings and runner.warnings:
                 passed = False
                 messages.append("Expected no warnings, but got:")
                 messages.extend(runner.warnings)

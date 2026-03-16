@@ -16,9 +16,9 @@ class TestCase:
     set_vars: dict = field(default_factory=dict)
     expect_success: bool = True
     assert_echoes: list = field(default_factory=list)
-    assert_no_echoes: bool = False
+    assert_no_echoes: bool = True
     assert_warnings: list = field(default_factory=list)
-    assert_no_warnings: bool = False
+    assert_no_warnings: bool = True
 
 
 def parse_scadtest_file(filepath: str) -> list[TestCase]:
@@ -82,9 +82,9 @@ def parse_scadtest_file(filepath: str) -> list[TestCase]:
             set_vars=test_data.get("set_vars", {}),
             expect_success=test_data.get("expect_success", True),
             assert_echoes=test_data.get("assert_echoes", []),
-            assert_no_echoes=test_data.get("assert_no_echoes", False),
+            assert_no_echoes=test_data.get("assert_no_echoes", True),
             assert_warnings=test_data.get("assert_warnings", []),
-            assert_no_warnings=test_data.get("assert_no_warnings", False),
+            assert_no_warnings=test_data.get("assert_no_warnings", True),
         )
         tests.append(test)
 

@@ -61,9 +61,9 @@ as a `[[test]]` section.
 | `set_vars` | table | `{}` | Variables to pass to the script via `-D` |
 | `expect_success` | bool | `true` | Whether OpenSCAD should complete without errors |
 | `assert_echoes` | list of strings | `[]` | Each string must appear (as a substring) in an ECHO output line |
-| `assert_no_echoes` | bool | `false` | Assert that there are no ECHO output lines |
+| `assert_no_echoes` | bool | `true` | Assert that there are no ECHO output lines (skipped when `assert_echoes` is non-empty) |
 | `assert_warnings` | list of strings | `[]` | Each string must appear (as a substring) in a WARNING line |
-| `assert_no_warnings` | bool | `false` | Assert that there are no WARNING lines |
+| `assert_no_warnings` | bool | `true` | Assert that there are no WARNING lines (skipped when `assert_warnings` is non-empty) |
 
 Exactly one of `script` or `script_file` must be provided for each test.
 
@@ -87,17 +87,20 @@ assert_echoes = ["ECHO: 10"]
 
 [[test]]
 # A test that expects OpenSCAD to report an error.
+# Set assert_no_echoes/assert_no_warnings to false for expected-failure tests
+# since OpenSCAD may emit warnings before failing.
 name = "Expected Failure Test"
 script = "this_function_does_not_exist();"
 expect_success = false
+assert_no_echoes = false
+assert_no_warnings = false
 
 [[test]]
 # A test using an external .scad file with no echoes or warnings.
+# assert_no_echoes and assert_no_warnings are true by default.
 name = "No Warnings Test"
 script_file = "my_module.scad"
 expect_success = true
-assert_no_echoes = true
-assert_no_warnings = true
 ```
 
 ## Python API
