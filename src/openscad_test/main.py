@@ -37,19 +37,29 @@ def main():
             print(f"Error parsing {filepath}: {e}", file=sys.stderr)
             sys.exit(1)
 
+        print(filepath)
+        file_passed = 0
+        file_failed = 0
+
         for test_case in tests:
             result = run_test(test_case)
             if result.passed:
-                print(f"{test_case.name} PASSED")
+                print(f"  {test_case.name} PASSED")
+                file_passed += 1
                 passed += 1
             else:
-                print(f"{test_case.name} FAILED")
+                print(f"  {test_case.name} FAILED")
                 for msg in result.messages:
-                    print(f"  {msg}")
+                    print(f"    {msg}")
+                file_failed += 1
                 failed += 1
 
+        file_total = file_passed + file_failed
+        print(f"  {file_passed} of {file_total} passed, {file_failed} failed.")
+        print()
+
     total = passed + failed
-    print(f"\n{passed} of {total} tests passed, {failed} failed.")
+    print(f"{passed} of {total} tests passed, {failed} failed.")
 
     sys.exit(1 if failed > 0 else 0)
 
