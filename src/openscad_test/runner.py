@@ -1,5 +1,6 @@
 """Run OpenSCAD test cases and collect results."""
 
+import concurrent.futures
 import os
 import tempfile
 from dataclasses import dataclass, field
@@ -66,7 +67,16 @@ def run_test(test_case: TestCase) -> TestResult:
             render_mode=RenderMode.test_only,
             set_vars=test_case.set_vars,
         )
-        runner.run()
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(runner.run)
+            try:
+                future.result(timeout=test_case.timeout)
+            except concurrent.futures.TimeoutError:
+                return TestResult(
+                    test_case=test_case,
+                    passed=False,
+                    messages=[f"Test timed out after {test_case.timeout} seconds."],
+                )
 
         passed = True
         messages = []
