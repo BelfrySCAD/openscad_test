@@ -41,6 +41,7 @@ def main():
 
     passed = 0
     failed = 0
+    failed_names = []
 
     for filepath in args.files:
         try:
@@ -70,6 +71,7 @@ def main():
                     print(f"    {msg}")
                 file_failed += 1
                 failed += 1
+                failed_names.append((filepath, result.test_case.name))
 
         file_total = file_passed + file_failed
         print(f"  {file_passed} of {file_total} passed, {file_failed} failed.")
@@ -77,6 +79,10 @@ def main():
 
     total = passed + failed
     print(f"{passed} of {total} tests passed, {failed} failed.")
+    if failed_names:
+        print("\nFailed tests:")
+        for filepath, name in failed_names:
+            print(f"  {filepath}: {name}")
 
     sys.exit(1 if failed > 0 else 0)
 

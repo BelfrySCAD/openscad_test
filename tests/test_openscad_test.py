@@ -500,6 +500,9 @@ expect_success = true
         captured = capsys.readouterr()
         assert "Fail Test FAILED" in captured.out
         assert "0 of 1 tests passed, 1 failed." in captured.out
+        assert "Failed tests:" in captured.out
+        assert captured.out.count("Fail Test") == 2
+        assert f"{path}: Fail Test" in captured.out
 
 
 @patch("openscad_test.runner.OpenScadRunner")
