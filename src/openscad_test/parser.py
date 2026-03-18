@@ -14,6 +14,7 @@ class TestCase:
     script: Optional[str]
     script_file: Optional[str]
     script_dir: Optional[str] = None
+    timeout: int = 60
     set_vars: dict = field(default_factory=dict)
     expect_success: bool = True
     assert_echoes: list = field(default_factory=list)
@@ -57,6 +58,11 @@ def parse_scadtest_file(filepath: str) -> list[TestCase]:
     with open(path, "rb") as f:
         data = tomllib.load(f)
 
+    config = data.get("config", {})
+
+    def cfg(key, hardcoded_default):
+        return config.get(key, hardcoded_default)
+
     tests = []
     for test_data in data.get("test", []):
         name = test_data.get("name", "Unnamed Test")
@@ -81,12 +87,13 @@ def parse_scadtest_file(filepath: str) -> list[TestCase]:
             script=script,
             script_file=script_file,
             script_dir=str(path.parent),
+            timeout=test_data.get("timeout", cfg("timeout", 60)),
             set_vars=test_data.get("set_vars", {}),
-            expect_success=test_data.get("expect_success", True),
+            expect_success=test_data.get("expect_success", cfg("expect_success", True)),
             assert_echoes=test_data.get("assert_echoes", []),
-            assert_no_echoes=test_data.get("assert_no_echoes", True),
+            assert_no_echoes=test_data.get("assert_no_echoes", cfg("assert_no_echoes", True)),
             assert_warnings=test_data.get("assert_warnings", []),
-            assert_no_warnings=test_data.get("assert_no_warnings", True),
+            assert_no_warnings=test_data.get("assert_no_warnings", cfg("assert_no_warnings", True)),
         )
         tests.append(test)
 

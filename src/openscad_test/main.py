@@ -1,5 +1,7 @@
 """Command-line entry point for openscad-test."""
 
+import argparse
+import concurrent.futures
 import sys
 
 from .parser import parse_scadtest_file
@@ -11,7 +13,7 @@ def main():
 
     Usage::
 
-        openscad-test <file.scadtest> [file2.scadtest ...]
+        openscad-test [-j N] <file.scadtest> [file2.scadtest ...]
 
     For each test in each file, prints the test name followed by ``PASSED``
     or ``FAILED``.  When a test fails, any ECHO, WARNING, or ERROR messages
@@ -21,16 +23,26 @@ def main():
     tests passed and how many failed.  The process exits with code ``0`` if
     all tests passed, or ``1`` if any test failed.
     """
-    args = sys.argv[1:]
+    parser = argparse.ArgumentParser(
+        prog="openscad-test",
+        description="Run OpenSCAD tests defined in .scadtest files.",
+    )
+    parser.add_argument("files", nargs="*", metavar="file.scadtest")
+    parser.add_argument(
+        "-j", "--jobs",
+        type=int, default=5, metavar="N",
+        help="Number of parallel test processes (default: 5)",
+    )
+    args = parser.parse_args()
 
-    if not args:
-        print("Usage: openscad-test <file.scadtest> [file2.scadtest ...]")
+    if not args.files:
+        print("Usage: openscad-test [-j N] <file.scadtest> [file2.scadtest ...]")
         sys.exit(1)
 
     passed = 0
     failed = 0
 
-    for filepath in args:
+    for filepath in args.files:
         try:
             tests = parse_scadtest_file(filepath)
         except Exception as e:
@@ -41,14 +53,19 @@ def main():
         file_passed = 0
         file_failed = 0
 
-        for test_case in tests:
-            result = run_test(test_case)
+        if args.jobs == 1 or len(tests) <= 1:
+            results = [run_test(tc) for tc in tests]
+        else:
+            with concurrent.futures.ProcessPoolExecutor(max_workers=args.jobs) as executor:
+                results = list(executor.map(run_test, tests))
+
+        for result in results:
             if result.passed:
-                print(f"  {test_case.name} PASSED")
+                print(f"  {result.test_case.name} PASSED")
                 file_passed += 1
                 passed += 1
             else:
-                print(f"  {test_case.name} FAILED")
+                print(f"  {result.test_case.name} FAILED")
                 for msg in result.messages:
                     print(f"    {msg}")
                 file_failed += 1

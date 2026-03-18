@@ -143,6 +143,77 @@ assert_no_warnings = false
         assert tests[0].assert_no_warnings is False
 
 
+def test_parse_config_timeout():
+    with scadtest_file(
+        """
+[config]
+timeout = 120
+
+[[test]]
+name = "Test A"
+script = "echo(1);"
+
+[[test]]
+name = "Test B"
+script = "echo(2);"
+timeout = 30
+"""
+    ) as path:
+        tests = parse_scadtest_file(path)
+        assert tests[0].timeout == 120  # inherits from config
+        assert tests[1].timeout == 30   # per-test overrides config
+
+
+def test_parse_config_expect_success():
+    with scadtest_file(
+        """
+[config]
+expect_success = false
+assert_no_echoes = false
+assert_no_warnings = false
+
+[[test]]
+name = "Test A"
+script = "echo(1);"
+
+[[test]]
+name = "Test B"
+script = "echo(2);"
+expect_success = true
+"""
+    ) as path:
+        tests = parse_scadtest_file(path)
+        assert tests[0].expect_success is False    # from config
+        assert tests[0].assert_no_echoes is False  # from config
+        assert tests[0].assert_no_warnings is False  # from config
+        assert tests[1].expect_success is True     # per-test overrides config
+
+
+def test_parse_timeout():
+    with scadtest_file(
+        """
+[[test]]
+name = "Timeout Test"
+script = "echo(1);"
+timeout = 120
+"""
+    ) as path:
+        tests = parse_scadtest_file(path)
+        assert tests[0].timeout == 120
+
+
+def test_parse_timeout_default():
+    with scadtest_file(
+        """
+[[test]]
+name = "Default Timeout Test"
+script = "echo(1);"
+"""
+    ) as path:
+        tests = parse_scadtest_file(path)
+        assert tests[0].timeout == 60
+
+
 def test_parse_set_vars():
     with scadtest_file(
         """
@@ -207,6 +278,7 @@ def _make_test_case(**kwargs):
         name="Test",
         script="echo(1);",
         script_file=None,
+        timeout=60,
         set_vars={},
         expect_success=True,
         assert_echoes=[],
@@ -346,6 +418,23 @@ def test_run_test_assert_no_warnings_fails(MockRunner):
 
 
 @patch("openscad_test.runner.OpenScadRunner")
+def test_run_test_timeout(MockRunner):
+    import time
+
+    def slow_run():
+        time.sleep(5)
+
+    mock = MagicMock()
+    mock.run.side_effect = slow_run
+    MockRunner.return_value = mock
+
+    tc = _make_test_case(timeout=1)
+    result = run_test(tc)
+    assert result.passed is False
+    assert any("timed out" in m for m in result.messages)
+
+
+@patch("openscad_test.runner.OpenScadRunner")
 def test_run_test_includes_echoes_and_warnings_in_failure_messages(MockRunner):
     MockRunner.return_value = _make_mock_runner(
         success=False,
@@ -379,7 +468,7 @@ script = "echo(1);"
         import sys
         from openscad_test.main import main
 
-        sys.argv = ["openscad-test", path]
+        sys.argv = ["openscad-test", "-j", "1", path]
         with pytest.raises(SystemExit) as exc_info:
             main()
         assert exc_info.value.code == 0
@@ -404,7 +493,7 @@ expect_success = true
         import sys
         from openscad_test.main import main
 
-        sys.argv = ["openscad-test", path]
+        sys.argv = ["openscad-test", "-j", "1", path]
         with pytest.raises(SystemExit) as exc_info:
             main()
         assert exc_info.value.code == 1
