@@ -31,21 +31,21 @@ wheels = [
 
 [[package]]
 name = "openscad-runner"
-version = "1.2.4"
+version = "1.2.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "apng" },
     { name = "pillow" },
     { name = "pygifsicle" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/59/00/fcc5318fa8ec913a4f54c5df72a66925e8f11c2a307610a77874341e3d2f/openscad_runner-1.2.4.tar.gz", hash = "sha256:6d4e990308afcaed1de1fc7cc6b196c88e0d50e20b1d94cf73783d2b1674a22f", size = 30533, upload-time = "2026-03-18T06:33:15.496Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/35/24/1504ec58dd7aaa186c65305bb48c8cf8b4e1469219f7d07ec4d5bc0bca43/openscad_runner-1.2.5.tar.gz", hash = "sha256:5dc9e8c26283776eb132726be74435276710dee3edd9280cb1d895d219fc1012", size = 42333, upload-time = "2026-03-18T06:55:48.811Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/3c/16/2bf450cca757357a1f6b5eb4e165e9a93b0972a080772d824247a0bd527c/openscad_runner-1.2.4-py3-none-any.whl", hash = "sha256:fd98ebf9c67c944197081130ee458c213929e867bbf5f43bc226f31de4b91fb0", size = 7833, upload-time = "2026-03-18T06:33:13.944Z" },
+    { url = "https://files.pythonhosted.org/packages/f9/dc/bd9b6132285bef0db44a6f37b14c79bac47bb793f574eabe63293cccbd3d/openscad_runner-1.2.5-py3-none-any.whl", hash = "sha256:7d3dd18df1d9f4f5381ba973a01b42900328101de49774b6249eb1d7af113a9f", size = 7892, upload-time = "2026-03-18T06:55:47.23Z" },
 ]
 
 [[package]]
 name = "openscad-test"
-version = "1.2.2"
+version = "1.2.3"
 source = { editable = "." }
 dependencies = [
     { name = "openscad-runner" },
@@ -57,7 +57,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "openscad-runner", specifier = ">=1.2.4" }]
+requires-dist = [{ name = "openscad-runner", specifier = ">=1.2.5" }]
 
 [package.metadata.requires-dev]
 dev = [{ name = "pytest", specifier = ">=9.0.2" }]

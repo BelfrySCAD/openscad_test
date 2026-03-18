@@ -1,6 +1,6 @@
 [project]
 name = "openscad-test"
-version = "1.2.3"
+version = "1.2.4"
 description = "A testing framework for OpenSCAD scripts"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -19,7 +19,7 @@ classifiers = [
     "Topic :: Software Development :: Testing",
 ]
 dependencies = [
-    "openscad-runner>=1.2.4",
+    "openscad-runner>=1.2.5",
 ]
 
 [project.scripts]
