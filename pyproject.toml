@@ -1,6 +1,6 @@
 [project]
 name = "openscad-test"
-version = "1.2.2"
+version = "1.2.3"
 description = "A testing framework for OpenSCAD scripts"
 readme = "README.md"
 requires-python = ">=3.11"
