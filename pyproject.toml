@@ -19,7 +19,7 @@ classifiers = [
     "Topic :: Software Development :: Testing",
 ]
 dependencies = [
-    "openscad-runner>=1.2.3",
+    "openscad-runner>=1.2.4",
 ]
 
 [project.scripts]
